@@ -1,0 +1,17 @@
+# macOS / editor
+.DS_Store
+__pycache__/
+*.pyc
+
+# Runtime data and secrets stay local/server-side only
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/config.json
+
+# Local backups are not part of deployable app
+backups/
+
+# Local TLS / ACME artifacts if copied later
+acme-state/
+certs/

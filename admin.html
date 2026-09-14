@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<title>CarTube · Quản trị Key</title>
+<style>
+:root{
+  --bg:#f5f5f7; --bg-elev:#ffffff; --card:#ffffff;
+  --text:#1d1d1f; --text2:#6e6e73; --text3:#8e8e93;
+  --hair:rgba(0,0,0,.10); --hair-soft:rgba(0,0,0,.06);
+  --blue:#0071e3; --blue-press:#0060c8;
+  --green:#34c759; --red:#ff3b30; --orange:#ff9f0a; --gray:#8e8e93; --purple:#af52de;
+  --seg-bg:#e8e8ed; --seg-thumb:#ffffff;
+  --field:#ffffff; --field-line:rgba(0,0,0,.12);
+  --shadow-card:0 1px 2px rgba(0,0,0,.04), 0 10px 30px rgba(0,0,0,.06);
+  --shadow-pop:0 8px 40px rgba(0,0,0,.16);
+  --header:rgba(245,245,247,.72);
+  --radius:20px;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,"Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#000000; --bg-elev:#1c1c1e; --card:#1c1c1e;
+    --text:#f5f5f7; --text2:#aeaeb2; --text3:#8e8e93;
+    --hair:rgba(255,255,255,.14); --hair-soft:rgba(255,255,255,.08);
+    --blue:#0a84ff; --blue-press:#409cff;
+    --green:#30d158; --red:#ff453a; --orange:#ff9f0a; --gray:#8e8e93; --purple:#bf5af2;
+    --seg-bg:#1c1c1e; --seg-thumb:#48484a;
+    --field:#1c1c1e; --field-line:rgba(255,255,255,.18);
+    --shadow-card:0 1px 2px rgba(0,0,0,.5), 0 10px 30px rgba(0,0,0,.4);
+    --shadow-pop:0 8px 40px rgba(0,0,0,.6);
+    --header:rgba(0,0,0,.72);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font); background:var(--bg); color:var(--text);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  letter-spacing:-.01em; line-height:1.45;
+}
+button,input,select{font-family:inherit}
+.hide{display:none!important}
+
+/* ============ LOGIN ============ */
+#login{
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+  padding:24px; background:var(--bg);
+}
+.login-card{
+  width:100%; max-width:380px; background:var(--card); border:.5px solid var(--hair-soft);
+  border-radius:26px; padding:40px 32px 32px; box-shadow:var(--shadow-card); text-align:center;
+}
+.mark{
+  width:66px;height:66px;margin:0 auto 18px;border-radius:19px;
+  background:linear-gradient(160deg,#ff2d55,#ff375f 55%,#ff9f0a);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(255,55,95,.35);
+}
+.mark svg{width:34px;height:34px;fill:#fff}
+.login-card h1{font-size:23px;font-weight:600;margin:0 0 4px;letter-spacing:-.02em}
+.login-card p{color:var(--text2);font-size:14px;margin:0 0 26px}
+.field{
+  width:100%;background:var(--field);color:var(--text);
+  border:1px solid var(--field-line);border-radius:13px;
+  padding:14px 15px;font-size:16px;outline:none;transition:border-color .15s, box-shadow .15s;
+}
+.field:focus{border-color:var(--blue);box-shadow:0 0 0 4px color-mix(in srgb,var(--blue) 18%, transparent)}
+.field::placeholder{color:var(--text3)}
+.btn{
+  -webkit-appearance:none;appearance:none;border:none;cursor:pointer;
+  font-size:16px;font-weight:500;border-radius:13px;padding:13px 18px;
+  background:var(--blue);color:#fff;transition:transform .08s, background .15s, opacity .15s;
+  letter-spacing:-.01em;
+}
+.btn:hover{background:var(--blue-press)}
+.btn:active{transform:scale(.975)}
+.btn[disabled]{opacity:.5;cursor:default}
+.btn-block{width:100%;margin-top:14px;padding:14px}
+.btn-ghost{background:transparent;color:var(--blue)}
+.btn-ghost:hover{background:color-mix(in srgb,var(--blue) 10%, transparent)}
+.btn-sm{font-size:13px;padding:7px 13px;border-radius:980px;font-weight:500}
+.btn-tinted{background:color-mix(in srgb,var(--blue) 12%, transparent);color:var(--blue)}
+.btn-tinted:hover{background:color-mix(in srgb,var(--blue) 18%, transparent)}
+.btn-danger{background:color-mix(in srgb,var(--red) 12%, transparent);color:var(--red)}
+.btn-danger:hover{background:color-mix(in srgb,var(--red) 20%, transparent)}
+.login-err{color:var(--red);font-size:13px;min-height:18px;margin-top:12px}
+
+/* ============ HEADER ============ */
+header{
+  position:sticky;top:0;z-index:50;
+  background:var(--header);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:.5px solid var(--hair);
+}
+.hwrap{max-width:1040px;margin:0 auto;padding:0 20px;height:52px;display:flex;align-items:center;gap:10px}
+.logo{font-weight:600;font-size:19px;letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+.logo .dotmark{width:22px;height:22px;border-radius:7px;background:linear-gradient(160deg,#ff2d55,#ff9f0a)}
+.logo small{color:var(--text3);font-weight:400;font-size:14px;letter-spacing:-.01em}
+.spacer{flex:1}
+.status{display:flex;align-items:center;gap:7px;color:var(--text2);font-size:13px}
+.status .dot{width:8px;height:8px;border-radius:50%;background:var(--gray);box-shadow:0 0 0 0 rgba(0,0,0,0)}
+.status.ok .dot{background:var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 22%, transparent)}
+.status.bad .dot{background:var(--red)}
+.linkbtn{background:none;border:none;color:var(--blue);font-size:14px;cursor:pointer;padding:6px 8px;border-radius:8px}
+.linkbtn:hover{background:color-mix(in srgb,var(--blue) 10%, transparent)}
+
+/* ============ LAYOUT ============ */
+main{max-width:1040px;margin:0 auto;padding:22px 20px 80px}
+.seg{
+  display:inline-flex;background:var(--seg-bg);border-radius:11px;padding:2px;margin:2px 0 22px;gap:2px;
+  width:100%;max-width:560px;
+}
+.seg button{
+  flex:1;border:none;background:transparent;color:var(--text);cursor:pointer;
+  font-size:12.5px;font-weight:500;padding:7px 6px;white-space:nowrap;border-radius:9px;transition:background .18s,color .18s,box-shadow .18s;
+}
+.seg button.on{background:var(--seg-thumb);box-shadow:0 1px 3px rgba(0,0,0,.14);}
+@media (prefers-color-scheme:dark){.seg button.on{color:#fff}}
+.card{
+  background:var(--card);border:.5px solid var(--hair-soft);border-radius:var(--radius);
+  box-shadow:var(--shadow-card);padding:22px;margin-bottom:18px;
+}
+.card h2{font-size:19px;font-weight:600;margin:0 0 3px;letter-spacing:-.02em}
+.card .sub{color:var(--text2);font-size:13.5px;margin:0 0 18px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+label.lab{display:block;font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.03em;margin:0 0 7px}
+.grow{flex:1;min-width:150px}
+
+/* selects styled like Apple */
+select.field{appearance:none;-webkit-appearance:none;padding-right:38px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%238e8e93' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 14px center;cursor:pointer}
+
+/* stepper */
+.stepper{display:inline-flex;align-items:center;background:var(--field);border:1px solid var(--field-line);border-radius:13px;overflow:hidden}
+.stepper button{width:44px;height:48px;border:none;background:transparent;color:var(--blue);font-size:22px;cursor:pointer}
+.stepper button:active{background:color-mix(in srgb,var(--blue) 10%, transparent)}
+.stepper input{width:56px;text-align:center;border:none;background:transparent;color:var(--text);font-size:17px;outline:none;
+  border-left:1px solid var(--field-line);border-right:1px solid var(--field-line);height:48px}
+
+/* stat grid */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{background:var(--card);border:.5px solid var(--hair-soft);border-radius:18px;padding:18px 18px 16px;box-shadow:var(--shadow-card)}
+.stat .n{font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.stat .l{color:var(--text2);font-size:13px;margin-top:8px;display:flex;align-items:center;gap:7px}
+.stat .l .sw{width:9px;height:9px;border-radius:50%}
+.stat.rev .n{font-size:26px}
+
+/* created chips */
+#created{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{font-family:var(--mono);font-size:13.5px;background:color-mix(in srgb,var(--green) 14%, transparent);
+  color:var(--green);border:.5px solid color-mix(in srgb,var(--green) 30%, transparent);
+  padding:7px 12px;border-radius:10px;cursor:pointer;transition:transform .08s}
+.chip:active{transform:scale(.96)}
+
+/* search */
+.search{position:relative;margin-bottom:14px}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--text3)}
+.search input{padding-left:40px}
+
+/* key list */
+.klist{display:flex;flex-direction:column;gap:10px}
+.kitem{
+  display:grid;grid-template-columns:1fr auto;gap:10px 16px;align-items:center;
+  background:var(--card);border:.5px solid var(--hair-soft);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow-card);
+}
+.kmain{min-width:0}
+.kkey{font-family:var(--mono);font-size:15px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.kkey:hover{color:var(--blue)}
+.kkey .cp{opacity:0;transition:opacity .15s;font-size:11px;color:var(--text3)}
+.kkey:hover .cp{opacity:1}
+.kmeta{color:var(--text2);font-size:12.5px;margin-top:5px;display:flex;flex-wrap:wrap;gap:5px 14px}
+.kmeta b{color:var(--text);font-weight:500}
+.kacts{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.pill{font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:980px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.pill .d{width:6px;height:6px;border-radius:50%}
+.pill.active{background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green)}
+.pill.active .d{background:var(--green)}
+.pill.unused{background:color-mix(in srgb,var(--gray) 18%,transparent);color:var(--text2)}
+.pill.unused .d{background:var(--gray)}
+.pill.disabled{background:color-mix(in srgb,var(--red) 15%,transparent);color:var(--red)}
+.pill.disabled .d{background:var(--red)}
+.plan-tag{font-size:11.5px;color:var(--text2);background:var(--seg-bg);padding:3px 9px;border-radius:980px}
+.empty{text-align:center;color:var(--text3);padding:40px 0;font-size:14px}
+
+/* plans editor */
+.ptable{display:flex;flex-direction:column;gap:10px}
+.prow{display:grid;grid-template-columns:1.3fr 1fr 1fr .8fr auto;gap:10px;align-items:center}
+.prow .field{padding:11px 13px;font-size:15px;border-radius:11px}
+.pdel{width:38px;height:38px;border-radius:10px;border:none;background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red);cursor:pointer;font-size:18px}
+.plabels{display:grid;grid-template-columns:1.3fr 1fr 1fr .8fr auto;gap:10px;margin-bottom:8px}
+.plabels span{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.03em}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+  background:rgba(30,30,32,.92);color:#fff;padding:12px 20px;border-radius:14px;font-size:14px;
+  box-shadow:var(--shadow-pop);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;backdrop-filter:blur(10px);z-index:100;max-width:88vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-color-scheme:dark){#toast{background:rgba(58,58,60,.92)}}
+
+@media (max-width:640px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .prow,.plabels{grid-template-columns:1fr 1fr;}
+  .plabels{display:none}
+  .prow .pdel{grid-column:2;justify-self:end}
+  .kitem{grid-template-columns:1fr}
+  .kacts{justify-content:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="login">
+  <div class="login-card">
+    <div class="mark"><svg viewBox="0 0 24 24"><path d="M12 1.5a5 5 0 0 0-5 5V9H6a2.5 2.5 0 0 0-2.5 2.5v8A2.5 2.5 0 0 0 6 22h12a2.5 2.5 0 0 0 2.5-2.5v-8A2.5 2.5 0 0 0 18 9h-1V6.5a5 5 0 0 0-5-5Zm3 7.5H9V6.5a3 3 0 0 1 6 0V9Zm-3 4a1.6 1.6 0 0 1 .8 3v2.2a.8.8 0 0 1-1.6 0V16a1.6 1.6 0 0 1 .8-3Z"/></svg></div>
+    <h1>Quản trị CarTube</h1>
+    <p>Nhập admin token để tiếp tục</p>
+    <input id="tok" class="field" type="password" placeholder="Admin token" autocomplete="off" spellcheck="false">
+    <button class="btn btn-block" onclick="signIn()">Mở khoá</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app" class="hide">
+  <header>
+    <div class="hwrap">
+      <div class="logo"><span class="dotmark"></span>CarTube <small>Quản trị key</small></div>
+      <div class="spacer"></div>
+      <div class="status" id="status"><span class="dot"></span><span id="statusTxt">Đang kết nối…</span></div>
+      <button class="linkbtn" onclick="signOut()">Đăng xuất</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="seg" id="seg">
+      <button class="on" data-tab="over">Tổng quan</button>
+      <button data-tab="keys">Key</button>
+      <button data-tab="plans">Gói &amp; giá</button>
+      <button data-tab="bank">Ngân hàng</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <section id="tab-over">
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <!-- KEYS -->
+    <section id="tab-keys" class="hide">
+      <div class="card">
+        <h2>Tạo key</h2>
+        <p class="sub">Chọn gói và số lượng, key mới sẽ hiện ra để sao chép.</p>
+        <div class="row">
+          <div class="grow">
+            <label class="lab">Gói</label>
+            <select id="plan" class="field"></select>
+          </div>
+          <div>
+            <label class="lab">Số lượng</label>
+            <div class="stepper">
+              <button onclick="stepCount(-1)">−</button>
+              <input id="count" value="1" inputmode="numeric">
+              <button onclick="stepCount(1)">+</button>
+            </div>
+          </div>
+          <div class="grow">
+            <label class="lab">Ghi chú</label>
+            <input id="note" class="field" placeholder="tuỳ chọn">
+          </div>
+          <button class="btn" style="height:48px" onclick="createKeys()">Tạo key</button>
+        </div>
+        <div id="created"></div>
+      </div>
+
+      <div class="card">
+        <h2>Danh sách key</h2>
+        <p class="sub" id="keycount">—</p>
+        <div class="search">
+          <svg viewBox="0 0 16 16"><path d="M11.7 10.3a5.4 5.4 0 1 0-1.4 1.4l3 3a1 1 0 0 0 1.4-1.4l-3-3ZM3 6.4a3.4 3.4 0 1 1 6.8 0 3.4 3.4 0 0 1-6.8 0Z"/></svg>
+          <input id="search" class="field" placeholder="Tìm key, máy, ghi chú…" oninput="renderKeys()">
+        </div>
+        <div class="klist" id="klist"></div>
+      </div>
+    </section>
+
+    <!-- PLANS -->
+    <section id="tab-plans" class="hide">
+      <div class="card">
+        <h2>Gói &amp; giá</h2>
+        <p class="sub">Số ngày = 0 nghĩa là vĩnh viễn. Sửa xong bấm Lưu.</p>
+        <div class="plabels"><span>Tên gói</span><span>Giá (VND)</span><span>Số ngày</span><span>Publish</span><span></span></div>
+        <div class="ptable" id="ptable"></div>
+        <div class="row" style="margin-top:16px">
+          <button class="btn btn-tinted btn-sm" onclick="addPlan()">＋ Thêm gói</button>
+          <div class="spacer"></div>
+          <button class="btn" onclick="savePlans()">Lưu thay đổi</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- BANK -->
+    <section id="tab-bank" class="hide">
+      <div class="card">
+        <h2>Cấu hình ngân hàng</h2>
+        <p class="sub">Dùng để tạo mã QR VietQR + nội dung chuyển khoản ở trang mua key.</p>
+        <div class="row">
+          <div class="grow">
+            <label class="lab">Mã ngân hàng (BIN)</label>
+            <input id="bBin" class="field" placeholder="VD: 970436 (Vietcombank)">
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <div class="grow"><label class="lab">Số tài khoản</label>
+            <input id="bAcc" class="field" placeholder="số tài khoản"></div>
+          <div class="grow"><label class="lab">Chủ tài khoản</label>
+            <input id="bName" class="field" placeholder="TEN IN HOA KHONG DAU"></div>
+        </div>
+        <div class="row" style="margin-top:16px">
+          <div class="spacer"></div>
+          <button class="btn" onclick="saveBank()">Lưu ngân hàng</button>
+        </div>
+        <p class="sub" style="margin-top:14px">BIN phổ biến: Vietcombank 970436 · Techcombank 970407 · MB 970422 · ACB 970416 · BIDV 970418 · VietinBank 970415 · VPBank 970432 · Sacombank 970403 · TPBank 970423.</p>
+      </div>
+
+      <div class="card">
+        <h2>Webhook <span style="color:var(--text3);font-weight:400;font-size:14px">— đấu sau</span></h2>
+        <p class="sub">Khi đấu cổng đối soát (SePay / Casso…) trỏ webhook vào URL dưới. URL đã kèm secret sẵn để hệ thống tự phát key khi tiền vào. Chưa đấu thì đơn ở trạng thái “Chờ” — bấm “Đã trả” để phát key thủ công.</p>
+        <div class="kmeta" style="flex-direction:column;gap:10px;align-items:stretch;margin-top:4px">
+          <div>URL webhook: <code id="whUrl" style="font-family:var(--mono)">—</code> <button class="btn btn-sm btn-tinted" onclick="copy($('#whUrl').textContent)">Chép</button></div>
+          <div>Secret: <code id="whSecret" style="font-family:var(--mono)">—</code> <button class="btn btn-sm btn-tinted" onclick="copy($('#whSecret').textContent)">Chép</button></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Đơn hàng</h2>
+        <p class="sub" id="ordcount">—</p>
+        <div class="klist" id="orders"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let TOK = localStorage.getItem('ct_tok') || '';
+let KEYS = [], PLANS = [];
+
+const $ = s => document.querySelector(s);
+const money = n => (n||0).toLocaleString('vi-VN') + 'đ';
+const fmtExp = e => !e ? 'vĩnh viễn' : new Date(e*1000).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1900);}
+function copy(text){
+  let ok=false;
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    ta.setSelectionRange(0,text.length);
+    ok=document.execCommand('copy'); document.body.removeChild(ta);
+  }catch(e){ok=false;}
+  if(!ok && navigator.clipboard){ navigator.clipboard.writeText(text).catch(()=>{}); ok=true; }
+  toast(ok?('Đã sao chép '+text):('Sao chép thủ công: '+text));
+}
+
+function hdr(){return {'Content-Type':'application/json','X-Admin-Token':TOK};}
+async function api(path, method, body){
+  const o={method:method||'GET',headers:hdr()};
+  if(body) o.body=JSON.stringify(body);
+  const r=await fetch(path,o);
+  if(r.status===401){setStatus(false);throw new Error('unauthorized');}
+  return r.json();
+}
+function setStatus(ok){
+  const s=$('#status'); s.classList.toggle('ok',ok); s.classList.toggle('bad',!ok);
+  document.getElementById('statusTxt').textContent = ok?'Đã kết nối':'Mất kết nối';
+}
+
+/* ---- auth ---- */
+async function signIn(){
+  TOK = $('#tok').value.trim();
+  if(!TOK){$('#loginErr').textContent='Nhập token';return;}
+  try{
+    const j=await api('/admin/plans');
+    if(!j.ok) throw 0;
+    localStorage.setItem('ct_tok',TOK);
+    enterApp();
+  }catch(e){ $('#loginErr').textContent='Token không đúng'; }
+}
+function signOut(){ localStorage.removeItem('ct_tok'); location.reload(); }
+function enterApp(){
+  $('#login').classList.add('hide');
+  $('#app').classList.remove('hide');
+  setStatus(true);
+  loadAll();
+}
+
+/* ---- tabs ---- */
+$('#seg').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  [...document.querySelectorAll('#seg button')].forEach(x=>x.classList.toggle('on',x===b));
+  ['over','keys','plans','bank'].forEach(t=>$('#tab-'+t).classList.toggle('hide',t!==b.dataset.tab));
+  if(b.dataset.tab==='bank'){loadBank();loadOrders();}
+});
+
+/* ---- data ---- */
+async function loadBank(){
+  const j=await api('/admin/bank'); if(!j.ok)return;
+  $('#bBin').value=j.bank.bin||''; $('#bAcc').value=j.bank.account||''; $('#bName').value=j.bank.name||'';
+  const secret=j.webhook_secret||'';
+  $('#whUrl').textContent = location.origin + '/v1/webhooks/sepay' + (secret ? ('?secret=' + encodeURIComponent(secret)) : '');
+  $('#whSecret').textContent = j.webhook_secret||'—';
+}
+async function saveBank(){
+  const j=await api('/admin/bank','POST',{bin:$('#bBin').value.trim(),account:$('#bAcc').value.trim(),name:$('#bName').value.trim()});
+  if(j.ok) toast('Đã lưu ngân hàng');
+}
+async function loadOrders(){
+  const j=await api('/admin/orders'); if(!j.ok)return;
+  const box=$('#orders'); box.innerHTML=''; $('#ordcount').textContent=j.orders.length+' đơn';
+  if(!j.orders.length){box.innerHTML='<div class="empty">Chưa có đơn</div>';return;}
+  j.orders.forEach(o=>{
+    const el=document.createElement('div'); el.className='kitem';
+    el.innerHTML=`<div class="kmain"><span class="kkey">${o.code}</span>
+      <div class="kmeta"><span class="plan-tag">${o.plan||''}</span>
+      <span class="pill ${o.status==='paid'?'active':'unused'}"><span class="d"></span>${o.status==='paid'?'Đã trả':'Chờ'}</span>
+      <span>${(o.amount||0).toLocaleString('vi-VN')}đ</span>
+      ${o.contact?`<span>liên hệ <b>${o.contact}</b></span>`:''}
+      ${o.key?`<span>key <b>${o.key}</b></span>`:''}</div></div>
+      <div class="kacts">${o.status!=='paid'?`<button class="btn btn-sm btn-tinted" data-c="${o.code}">Đã trả → phát key</button>`:''}</div>`;
+    const btn=el.querySelector('[data-c]'); if(btn)btn.onclick=()=>markPaid(o.code);
+    box.appendChild(el);
+  });
+}
+async function markPaid(code){
+  const j=await api('/admin/order/'+encodeURIComponent(code)+'/paid','POST',{});
+  if(j.ok){toast('Đã phát key: '+j.key);loadOrders();loadKeys();}
+  else toast('Lỗi: '+(j.error||'?'));
+}
+
+async function loadAll(){ await loadPlans(); await loadKeys(); }
+
+async function loadPlans(){
+  const j=await api('/admin/plans'); if(!j.ok)return;
+  PLANS=j.plans; setStatus(true);
+  const sel=$('#plan'); sel.innerHTML='';
+  PLANS.forEach(p=>{const o=document.createElement('option');o.value=p.name;
+    o.textContent=`${p.name} · ${money(p.price)} · ${p.days?p.days+' ngày':'vĩnh viễn'}`;sel.appendChild(o);});
+  renderPlans();
+}
+function renderPlans(){
+  const t=$('#ptable'); t.innerHTML='';
+  PLANS.forEach(p=>t.appendChild(planRow(p.name,p.price,p.days,p.published!==0)));
+}
+function planRow(n,pr,dy,pub){
+  const d=document.createElement('div'); d.className='prow';
+  d.innerHTML=`<input class="field" value="${n}" placeholder="tên gói">
+    <input class="field" type="number" value="${pr}" inputmode="numeric">
+    <input class="field" type="number" value="${dy||0}" inputmode="numeric">
+    <label style="display:flex;align-items:center;gap:8px;color:var(--text2);font-size:13px;min-height:38px"><input type="checkbox" ${pub?'checked':''}> Publish</label>
+    <button class="pdel" title="Xoá">✕</button>`;
+  d.querySelector('.pdel').onclick=()=>d.remove();
+  return d;
+}
+function addPlan(){ $('#ptable').appendChild(planRow('goi_moi',0,0,true)); }
+async function savePlans(){
+  const rows=[...document.querySelectorAll('#ptable .prow')].map(r=>{const i=r.querySelectorAll('input');
+    return {name:i[0].value.trim(),price:+i[1].value||0,days:+i[2].value||0,published:i[3].checked};}).filter(p=>p.name);
+  const j=await api('/admin/plans','POST',{plans:rows});
+  if(j.ok){toast('Đã lưu bảng giá');await loadPlans();}
+}
+
+async function loadKeys(){
+  const j=await api('/admin/list'); if(!j.ok)return;
+  KEYS=j.keys; setStatus(true);
+  renderStats(); renderKeys();
+}
+function renderStats(){
+  const c={active:0,unused:0,disabled:0}; let rev=0;
+  KEYS.forEach(k=>{c[k.status]=(c[k.status]||0)+1; if(k.status==='active')rev+=(k.price||0);});
+  const cards=[
+    {n:KEYS.length,l:'Tổng key',c:'var(--blue)'},
+    {n:c.active||0,l:'Đang dùng',c:'var(--green)'},
+    {n:c.unused||0,l:'Chưa dùng',c:'var(--gray)'},
+    {n:c.disabled||0,l:'Đã khoá',c:'var(--red)'},
+  ];
+  $('#stats').innerHTML = cards.map(s=>
+    `<div class="stat"><div class="n">${s.n}</div><div class="l"><span class="sw" style="background:${s.c}"></span>${s.l}</div></div>`
+  ).join('') +
+    `<div class="stat rev" style="grid-column:1/-1"><div class="n" style="color:var(--green)">${money(rev)}</div><div class="l">Doanh thu ước tính từ key đang dùng</div></div>`;
+}
+function renderKeys(){
+  const q=($('#search').value||'').trim().toUpperCase();
+  const list=KEYS.filter(k=>!q || (k.key+' '+(k.device||'')+' '+(k.note||'')+' '+(k.plan||'')).toUpperCase().includes(q));
+  $('#keycount').textContent = `${list.length} / ${KEYS.length} key`;
+  const box=$('#klist');
+  if(!list.length){box.innerHTML='<div class="empty">Chưa có key nào</div>';return;}
+  box.innerHTML='';
+  list.forEach(k=>{
+    const dev = k.device ? `<span>Máy <b>${k.device.slice(0,14)}…</b></span>` : '<span>Chưa gán máy</span>';
+    const el=document.createElement('div'); el.className='kitem';
+    el.innerHTML=`
+      <div class="kmain">
+        <span class="kkey" title="Bấm để sao chép">${k.key}<span class="cp">Sao chép</span></span>
+        <div class="kmeta">
+          <span class="plan-tag">${k.plan||'-'}</span>
+          <span class="pill ${k.status}"><span class="d"></span>${statusVi(k.status)}</span>
+          ${dev}
+          <span>Hạn <b>${fmtExp(k.expires_at)}</b></span>
+          ${k.note?`<span>“${k.note}”</span>`:''}
+        </div>
+      </div>
+      <div class="kacts">
+        ${k.device?`<button class="btn btn-sm btn-tinted" data-a="unbind">Gỡ máy</button>`:''}
+        <button class="btn btn-sm btn-tinted" data-a="toggle">${k.status==='disabled'?'Mở khoá':'Khoá'}</button>
+        <button class="btn btn-sm btn-danger" data-a="del">Xoá</button>
+      </div>`;
+    el.querySelector('.kkey').onclick=()=>{copy(k.key);};
+    el.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>keyAction(k,b.dataset.a));
+    box.appendChild(el);
+  });
+}
+function statusVi(s){return s==='active'?'Đang dùng':s==='disabled'?'Đã khoá':'Chưa dùng';}
+
+async function keyAction(k,a){
+  if(a==='unbind'){await api('/admin/unbind','POST',{key:k.key});toast('Đã gỡ máy');}
+  else if(a==='toggle'){const dis=k.status!=='disabled';await api(dis?'/admin/disable':'/admin/enable','POST',{key:k.key});toast(dis?'Đã khoá key':'Đã mở khoá');}
+  else if(a==='del'){if(!confirm('Xoá '+k.key+'?'))return;await api('/admin/delete','POST',{key:k.key});toast('Đã xoá');}
+  await loadKeys();
+}
+
+function stepCount(d){const i=$('#count');i.value=Math.max(1,Math.min(500,(+i.value||1)+d));}
+async function createKeys(){
+  const plan=$('#plan').value, count=+$('#count').value||1, note=$('#note').value.trim();
+  const j=await api('/admin/create','POST',{plan,count,note});
+  if(!j.ok){toast('Lỗi: '+(j.error||'?'));return;}
+  const c=$('#created'); c.innerHTML='';
+  j.created.forEach(k=>{const s=document.createElement('span');s.className='chip';s.textContent=k;
+    s.title='Bấm để sao chép';s.onclick=()=>{copy(k);};c.appendChild(s);});
+  toast(`Đã tạo ${j.created.length} key`);
+  loadKeys();
+}
+
+/* ---- boot ---- */
+$('#tok').addEventListener('keydown',e=>{if(e.key==='Enter')signIn();});
+if(TOK){ enterApp(); } else { $('#tok').focus(); }
+</script>
+</body>
+</html>
