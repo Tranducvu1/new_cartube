@@ -41,7 +41,7 @@ import urllib.request
 import mimetypes
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-DATA = os.path.join(ROOT, 'data')
+DATA = os.environ.get('DATA_DIR') or (os.path.join('/tmp', 'new_cartube-data') if os.environ.get('VERCEL') else os.path.join(ROOT, 'data'))
 ASSETS = os.path.join(ROOT, 'assets')
 os.makedirs(DATA, exist_ok=True)
 os.makedirs(ASSETS, exist_ok=True)
@@ -86,10 +86,17 @@ for _k, _d in (('bank_bin', ''), ('bank_account', ''), ('bank_name', ''),
 if not CFG.get('webhook_secret'):
     CFG['webhook_secret'] = secrets.token_urlsafe(18)
     _changed = True
-# Cho phep nap SEPAY_API_KEY tu env (uu tien)
-if os.environ.get('SEPAY_API_KEY') and CFG.get('sepay_api_key') != os.environ.get('SEPAY_API_KEY'):
-    CFG['sepay_api_key'] = os.environ['SEPAY_API_KEY']
-    _changed = True
+# Cho phep nap cau hinh tu env khi deploy (uu tien hon file local).
+for _env, _cfg in (
+        ('ADMIN_TOKEN', 'admin_token'),
+        ('BANK_BIN', 'bank_bin'),
+        ('BANK_ACCOUNT', 'bank_account'),
+        ('BANK_NAME', 'bank_name'),
+        ('WEBHOOK_SECRET', 'webhook_secret'),
+        ('SEPAY_API_KEY', 'sepay_api_key')):
+    if os.environ.get(_env) and CFG.get(_cfg) != os.environ.get(_env):
+        CFG[_cfg] = os.environ[_env]
+        _changed = True
 if _changed:
     save_config(CFG)
 ADMIN_TOKEN = CFG['admin_token']
@@ -165,10 +172,10 @@ def init_db():
         conn.executemany(
             'INSERT INTO plans(name,price,days,published) VALUES(?,?,?,?)',
             [
-                ('1thang', 50000, 30, 1),
+                ('1thang', 50000, 30, 0),
                 ('6thang', 250000, 180, 0),
                 ('12thang', 450000, 365, 0),
-                ('vinhvien', 150000, 0, 1),
+                ('VinhVien', 150000, 0, 1),
             ],
         )
     conn.commit()

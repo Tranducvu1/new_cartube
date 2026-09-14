@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/downloads/(.*)", "dest": "/downloads/$1" },
+    { "src": "/styles.css", "dest": "/styles.css" },
+    { "src": "/app.js", "dest": "/app.js" },
+    { "src": "/mua-key.html", "dest": "/mua-key.html" },
+    { "src": "/(.*)", "dest": "/api/index.py" }
+  ]
+}

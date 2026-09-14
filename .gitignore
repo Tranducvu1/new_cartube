@@ -15,3 +15,4 @@ backups/
 # Local TLS / ACME artifacts if copied later
 acme-state/
 certs/
+.vercel
