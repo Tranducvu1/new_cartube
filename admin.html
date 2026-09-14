@@ -483,8 +483,13 @@ async function loadKeys(){
   renderStats(); renderKeys();
 }
 function renderStats(){
-  const c={active:0,unused:0,disabled:0}; let rev=0;
-  KEYS.forEach(k=>{c[k.status]=(c[k.status]||0)+1; if(k.status==='active')rev+=(k.price||0);});
+  const c={active:0,unused:0,disabled:0};
+  const priceByPlan=Object.fromEntries((PLANS||[]).map(p=>[p.name,+p.price||0]));
+  let rev=0;
+  KEYS.forEach(k=>{
+    c[k.status]=(c[k.status]||0)+1;
+    rev += (+k.price||priceByPlan[k.plan]||0);
+  });
   const cards=[
     {n:KEYS.length,l:'Tổng key',c:'var(--blue)'},
     {n:c.active||0,l:'Đang dùng',c:'var(--green)'},
@@ -494,7 +499,7 @@ function renderStats(){
   $('#stats').innerHTML = cards.map(s=>
     `<div class="stat"><div class="n">${s.n}</div><div class="l"><span class="sw" style="background:${s.c}"></span>${s.l}</div></div>`
   ).join('') +
-    `<div class="stat rev" style="grid-column:1/-1"><div class="n" style="color:var(--green)">${money(rev)}</div><div class="l">Doanh thu ước tính từ key đang dùng</div></div>`;
+    `<div class="stat rev" style="grid-column:1/-1"><div class="n" style="color:var(--green)">${money(rev)}</div><div class="l">Doanh thu theo tổng key đã tạo</div></div>`;
 }
 function renderKeys(){
   const q=($('#search').value||'').trim().toUpperCase();
